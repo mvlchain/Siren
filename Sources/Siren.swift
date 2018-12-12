@@ -184,14 +184,14 @@ private extension Siren {
             }
             do {
                 let decodedData = try JSONDecoder().decode(SirenLookupModel.self, from: data)
-                
+
                 guard !decodedData.results.isEmpty else {
                     return postError(.appStoreDataRetrievalEmptyResults)
                 }
 
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    
+
                     self.printMessage("Decoded JSON results: \(decodedData)")
                     self.delegate?.sirenNetworkCallDidReturnWithNewVersionInformation(lookupModel: decodedData)
                     self.processVersionCheck(with: decodedData)
@@ -204,7 +204,7 @@ private extension Siren {
 
     func processVersionCheck(with model: SirenLookupModel) {
         guard isUpdateCompatibleWithDeviceOS(for: model) else { return }
-        
+
         guard let appID = model.results.first?.appID else {
             return postError(.appStoreAppIDFailure)
         }
@@ -225,7 +225,7 @@ private extension Siren {
 
         guard let currentVersionReleaseDate = model.results.first?.currentVersionReleaseDate,
             let daysSinceRelease = Date.days(since: currentVersionReleaseDate), let hoursSinceRelease = Date.hours(since: currentVersionReleaseDate) else {
-                return
+            return
         }
 
         guard daysSinceRelease >= showAlertAfterCurrentVersionHasBeenReleasedForDays else {
